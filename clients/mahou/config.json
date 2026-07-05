@@ -1,0 +1,24 @@
+{
+  "client_id": "mahou",
+  "brand": {
+    "name": "Mahou San Miguel",
+    "primary": "#DC0019",
+    "ink": "#222629",
+    "accent": "#9a7400",
+    "white_label": "Relevant Traffic",
+    "powered_by": "Cupperlab"
+  },
+  "domains_map": ["Corporativo","Marcas","No-Alcohol","HORECA","Distribución","Internacional","Hidratación/Solán","Refeel","Yuzz","Más con Mahou"],
+  "brands": ["Mahou","San Miguel","Alhambra","Victoria","La Virgen","Solán de Cabras","Founders"],
+  "competitors": ["Estrella Galicia","Damm","Heineken/Cruzcampo"],
+  "kpi_targets": { "ai_visibility": 80, "citation_share": 25, "factual_accuracy": 95, "narrative_alignment": 70, "reputational_risk": 40, "content_gap": 50, "correction_time_h": 48 },
+  "disabled_modules": [],
+  "roles": [
+    { "id": "admin", "label": "Administrador (rT·Cupperlab)", "credential": { "user": "admin", "pass": "rtcupper2026*" }, "sees": "all", "landing": "torre", "platform_admin": true },
+    { "id": "squad", "label": "Squad GEO (MSM central)", "credential": { "user": "SquadGEO", "pass": "msm2026*" }, "sees": "all", "landing": "torre" },
+    { "id": "marcas", "label": "Operador Marcas", "credential": { "user": "marcasuser", "pass": "msmmarcas2026*" },
+      "sees": ["torre","visibilidad","data-ia","brand-link","prompts","narrativas","autoridad","competidores","riesgo"], "landing": "torre" },
+    { "id": "horeca", "label": "Operador Hostelería", "credential": { "user": "hosteleriauser", "pass": "msmhost2026*" },
+      "sees": ["torre","visibilidad","prompts","narrativas","horeca","riesgo"], "landing": "horeca" }
+  ]
+}

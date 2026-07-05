@@ -1,0 +1,124 @@
+{
+  "client_id": "mahou",
+  "period": "2026-06",
+  "as_of": "2026-06-25",
+  "source": "Perplexity/ChatGPT/Google AIO (n=4 prompts) + baseline · pipeline Relevant pendiente de volcado",
+  "kpis": [
+    { "id": "ai_visibility", "label": "AI Visibility Share", "value": 75, "unit": "%", "state": "real", "hint": "muestra Perplexity n=4" },
+    { "id": "citation_share", "label": "AI Citation Share", "value": 0, "unit": "%", "state": "real", "hint": "0 citas a fuente propia" },
+    { "id": "factual_accuracy", "label": "Factual Accuracy", "value": "—", "unit": "", "state": "pendiente", "hint": "1 error real (Solán)" },
+    { "id": "narrative_alignment", "label": "Narrative Alignment", "value": 38, "unit": "", "state": "real", "hint": "rúbrica n=4" },
+    { "id": "reputational_risk", "label": "Reputational Risk", "value": 69, "unit": "", "state": "real", "hint": "5 riesgos (mayor=peor)" },
+    { "id": "content_gap", "label": "Content Gap", "value": 100, "unit": "%", "state": "real", "hint": "sin presencia/cita propia" }
+  ],
+  "visibility_by_engine": {
+    "labels": ["ChatGPT","Perplexity","Gemini","Google AIO","AI Mode"],
+    "brand": [50, 75, null, 50, null],
+    "state": "real",
+    "note": "Gemini/AI Mode pendientes de captura autenticada"
+  },
+  "brand_vs_link": [
+    { "brand": "San Miguel", "mentions": 23596, "links": 624, "state": "real" },
+    { "brand": "Mahou", "mentions": 18420, "links": 510, "state": "pendiente" },
+    { "brand": "Alhambra", "mentions": 6100, "links": 280, "state": "pendiente" }
+  ],
+  "authority": [
+    { "domain": "mahou.es", "dr": 64, "dir": null, "backlinks": null, "refdomains": null, "dofollow_pct": null, "state": "real" },
+    { "domain": "sanmiguel.es", "dr": 59, "dir": null, "backlinks": null, "refdomains": null, "dofollow_pct": null, "state": "real" },
+    { "domain": "cervezasalhambra.com", "dr": 43, "dir": null, "backlinks": null, "refdomains": null, "dofollow_pct": null, "state": "real" },
+    { "domain": "solandecabras.es", "dr": 55, "dir": null, "backlinks": null, "refdomains": null, "dofollow_pct": null, "state": "real" }
+  ],
+  "prompts_bank": [
+    { "cluster": "0,0 / salud", "prompt": "mejor cerveza sin alcohol", "volume": 5400, "criticidad": "CRÍTICA", "presence": "ausente", "state": "real" },
+    { "cluster": "0,0 / salud", "prompt": "calorías cerveza sin alcohol", "volume": 1900, "criticidad": "Alta", "presence": "ausente", "state": "real" },
+    { "cluster": "0,0 / salud", "prompt": "cerveza sin gluten", "volume": 1900, "criticidad": "Media", "presence": "ausente", "state": "real" },
+    { "cluster": "0,0 / salud", "prompt": "azúcar en la cerveza", "volume": 1185, "criticidad": "Media", "presence": "ausente", "state": "real" },
+    { "cluster": "Deporte", "prompt": "el alcohol engorda", "volume": 1300, "criticidad": "Alta", "presence": "ausente", "state": "real" },
+    { "cluster": "Grifo / Barra", "prompt": "dónde tomar una buena caña en Madrid", "volume": null, "criticidad": "Alta", "presence": "mencionada", "state": "cualitativo" }
+  ],
+  "competitors": [
+    { "name": "Mahou San Miguel", "ai_visibility": 75, "citation_share": 0, "authority": 64, "is_brand": true },
+    { "name": "Estrella Galicia", "ai_visibility": 68, "citation_share": 12, "authority": 66 },
+    { "name": "Damm", "ai_visibility": 60, "citation_share": 9, "authority": 62 },
+    { "name": "Heineken/Cruzcampo", "ai_visibility": 55, "citation_share": 7, "authority": 70 }
+  ],
+  "alerts": [
+    { "severity": "critico", "domain": "No-Alcohol", "trigger": "0 citas propias en 'mejor cerveza sin alcohol' (5.400 búsq.)", "owner": "Squad GEO", "sla_h": 48, "state": "real" },
+    { "severity": "alto", "domain": "Corporativo", "trigger": "Error factual sobre origen del agua Solán de Cabras en Perplexity", "owner": "Comunicación", "sla_h": 72, "state": "real" },
+    { "severity": "medio", "domain": "Marcas", "trigger": "Somos los más mencionados pero no los más citados (Ámbar lidera en enlaces)", "owner": "SEO/Autoridad", "sla_h": 168, "state": "real" }
+  ],
+  "actions": [
+    { "title": "Landing + FAQ 0,0 optimizada para IA", "origin": "Content Gap 0,0", "owner": "Content", "impact": "Alto", "due": "2026-07-15", "status": "pendiente" },
+    { "title": "Corrección factual origen Solán (web + Wikipedia)", "origin": "Alerta alta", "owner": "Comunicación", "impact": "Alto", "due": "2026-07-08", "status": "en_curso" },
+    { "title": "Campaña linkbuilding autoridad No-Alcohol", "origin": "Brand vs Link", "owner": "Autoridad", "impact": "Medio", "due": "2026-07-31", "status": "pendiente" }
+  ],
+  "cycle": {
+    "case": "Content gap 0,0 — 'mejor cerveza sin alcohol'",
+    "score_before": 0,
+    "score_after": 40,
+    "state": "cualitativo",
+    "note": "El salto del marcador es ilustrativo del mecanismo, no una métrica capturada.",
+    "steps": [
+      { "n": 1, "name": "Detecta", "desc": "0 citas propias en un prompt de 5.400 búsq./mes" },
+      { "n": 2, "name": "Diagnostica", "desc": "No hay landing/FAQ 0,0 optimizada para IA" },
+      { "n": 3, "name": "Propone", "desc": "Landing + FAQ 0,0 + refuerzo de autoridad" },
+      { "n": 4, "name": "Aprueba", "desc": "Squad GEO + Marca validan claims" },
+      { "n": 5, "name": "Ejecuta (MCP)", "desc": "Publicación vía agente Editor GEO" },
+      { "n": 6, "name": "Re-mide", "desc": "Re-test en IA a las 48h; el marcador sube" }
+    ]
+  },
+  "narratives": {
+    "layers": [
+      { "layer": "Corporativa", "diagnostico": "Cuando buscan la marca, aparecemos.", "estado": "ok" },
+      { "layer": "Por momento", "diagnostico": "Cuando buscan 'qué beber', nos diluimos.", "estado": "riesgo" },
+      { "layer": "Por marca", "diagnostico": "Presencia desigual entre marcas del grupo.", "estado": "medio" },
+      { "layer": "Sensibles (YMYL)", "diagnostico": "En salud/moderación/embarazo casi no lideramos.", "estado": "critico" }
+    ],
+    "claims": [
+      { "claim": "Perfil calórico de San Miguel 0,0", "status": "aprobado", "state": "cualitativo" },
+      { "claim": "Origen del agua Solán de Cabras", "status": "en_revision", "state": "real" },
+      { "claim": "Consumo moderado y salud", "status": "pendiente", "state": "pendiente" }
+    ]
+  },
+  "ga4_ai_traffic": [
+    { "brand": "Mahou", "engine": "ChatGPT", "landing": "/00-tostada", "sessions": 1240, "state": "pendiente" },
+    { "brand": "Alhambra", "engine": "Perplexity", "landing": "/el-mirador", "sessions": 410, "state": "pendiente" },
+    { "brand": "Alhambra", "engine": "Gemini", "landing": "/experiencias", "sessions": 180, "state": "pendiente" },
+    { "brand": "San Miguel", "engine": "ChatGPT", "landing": "/especial", "sessions": 690, "state": "pendiente" }
+  ],
+  "local_horeca": [
+    { "poi": "Bar La Barra (Madrid Centro)", "gbp_score": 78, "reviews": 342, "opportunity": "Ficha sin atributos de cerveza de barril", "state": "cualitativo" },
+    { "poi": "Cervecería Malasaña", "gbp_score": 64, "reviews": 128, "opportunity": "Sin fotos de producto MSM", "state": "cualitativo" },
+    { "poi": "Tardeo Chamberí", "gbp_score": 71, "reviews": 210, "opportunity": "Reviews no responden a menciones de marca", "state": "cualitativo" }
+  ],
+  "serp": {
+    "keyword": "mejor cerveza sin alcohol",
+    "aio_present": true,
+    "aio_cites_brand": false,
+    "organic": [
+      { "pos": 1, "domain": "cerveza-artesana.com" },
+      { "pos": 2, "domain": "okdiario.com" },
+      { "pos": 5, "domain": "mahou.es" }
+    ],
+    "paa": ["¿Qué cerveza sin alcohol es más sana?", "¿La 0,0 tiene alcohol?", "¿Engorda la cerveza sin alcohol?"],
+    "state": "pendiente"
+  },
+  "agents": [
+    { "name": "Centinela", "role": "Monitoriza los motores IA y dispara alertas", "status": "activo", "last": "2026-07-05 07:00" },
+    { "name": "Cartógrafo", "role": "Mapea dominios y citas dominantes por tema", "status": "activo", "last": "2026-07-04" },
+    { "name": "Editor GEO", "role": "Propone y publica contenido vía capa MCP", "status": "con_aprobacion", "last": "2026-07-03" },
+    { "name": "Guardián", "role": "Valida claims y cumplimiento antes de publicar", "status": "activo", "last": "2026-07-05" }
+  ],
+  "training": [
+    { "course": "Onboarding GEO — fundamentos", "role": "Todos", "min": 25 },
+    { "course": "Operar tu Tablero de Dominio", "role": "Operadores", "min": 40 },
+    { "course": "Protocolo Riesgo → Acción", "role": "Squad GEO", "min": 30 },
+    { "course": "Certificación GEO-OS", "role": "Administrador", "min": 60 }
+  ],
+  "reporting": [
+    { "cadence": "Continua", "artifact": "Feed en vivo + alertas", "owner": "Centinela", "channel": "Dashboard" },
+    { "cadence": "Semanal", "artifact": "Qué cambió esta semana", "owner": "Squad GEO", "channel": "Email" },
+    { "cadence": "Mensual", "artifact": "Informe GEO white-label (.xlsx)", "owner": "Cupperlab", "channel": "Cliente" },
+    { "cadence": "Trimestral", "artifact": "Comité (QBR)", "owner": "rT · Cupperlab", "channel": "COEJ" }
+  ]
+}
