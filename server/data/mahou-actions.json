@@ -1,0 +1,39 @@
+[
+  {
+    "id": "a-1783261001455",
+    "status": "en_curso",
+    "created": "2026-07-05T14:16:41.455Z",
+    "title": "Landing + FAQ 0,0 optimizada para IA",
+    "origin": "Ciclo GEO",
+    "owner": "Content",
+    "impact": "Alto",
+    "due": "2026-07-20"
+  },
+  {
+    "id": "seed-0",
+    "title": "Landing + FAQ 0,0 optimizada para IA",
+    "origin": "Content Gap 0,0",
+    "owner": "Content",
+    "impact": "Alto",
+    "due": "2026-07-15",
+    "status": "pendiente"
+  },
+  {
+    "id": "seed-1",
+    "title": "Corrección factual origen Solán (web + Wikipedia)",
+    "origin": "Alerta alta",
+    "owner": "Comunicación",
+    "impact": "Alto",
+    "due": "2026-07-08",
+    "status": "en_curso"
+  },
+  {
+    "id": "seed-2",
+    "title": "Campaña linkbuilding autoridad No-Alcohol",
+    "origin": "Brand vs Link",
+    "owner": "Autoridad",
+    "impact": "Medio",
+    "due": "2026-07-31",
+    "status": "pendiente"
+  }
+]
