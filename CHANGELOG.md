@@ -3,6 +3,22 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/).
 Versionado semántico. Fase 1 = core config-driven multicliente.
 
+## [1.5.0-phase1] — 2026-07-19
+
+Capa de formación — Fase 2: Academia por rol con lecciones y certificación.
+
+### Añadido
+- **Academia GEO-OS** (reescritura de `Formacion.vue`): rutas de aprendizaje por rol
+  (Fundamentos + Administración + Squad + Marcas + Hostelería), cada una con **lecciones
+  micro** (resumen + puntos clave + **tarea guiada** enlazada al módulo real), barra de
+  progreso y **examen de certificación** con badge **"GEO-OS Certified"** (score + fecha).
+- **Contenido** (`src/content/academy.js`): 5 rutas, ~16 lecciones y quizzes (aprobado ≥ 70%).
+  Rutas visibles según rol (el admin ve todas). Progreso y certificación en localStorage
+  por cliente+rol.
+
+### Pendiente
+- Fase 3: analítica de adopción (quién completó qué, módulos infrautilizados) para el admin.
+
 ## [1.4.0-phase1] — 2026-07-19
 
 Capa de formación (Academia GEO-OS) — Fase 1: onboarding in-app + ayuda contextual.

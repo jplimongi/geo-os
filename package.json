@@ -1,6 +1,6 @@
 {
   "name": "geo-os",
-  "version": "1.4.0-phase1",
+  "version": "1.5.0-phase1",
   "private": true,
   "description": "GEO-OS — plataforma multi-cliente de operacion GEO (core config-driven). IP Cupperlab; datos via pipeline Relevant.",
   "type": "module",
