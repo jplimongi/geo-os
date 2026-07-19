@@ -4,6 +4,7 @@ import { useClient } from '../stores/client'
 import { useOps } from '../stores/ops'
 import KpiCard from '../components/KpiCard.vue'
 import BaseChart from '../components/BaseChart.vue'
+import OnboardingChecklist from '../components/OnboardingChecklist.vue'
 
 const client = useClient()
 const ops = useOps()
@@ -36,6 +37,8 @@ const whatChanged = computed(() => {
     <p class="muted" style="margin:6px 0 20px">
       {{ client.config?.brand?.name }} · {{ feed.period }} · <em>{{ feed.source }}</em>
     </p>
+
+    <OnboardingChecklist />
 
     <div class="kpi-row" style="margin-bottom:22px">
       <KpiCard v-for="k in kpis" :key="k.id" :label="k.label" :value="k.value" :unit="k.unit" :state="k.state" :hint="k.hint" />

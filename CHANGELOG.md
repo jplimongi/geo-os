@@ -3,6 +3,23 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/).
 Versionado semántico. Fase 1 = core config-driven multicliente.
 
+## [1.4.0-phase1] — 2026-07-19
+
+Capa de formación (Academia GEO-OS) — Fase 1: onboarding in-app + ayuda contextual.
+
+### Añadido
+- **Ayuda contextual** (`HelpDrawer.vue` + botón `?` en el header): explica el módulo actual
+  (qué es / cómo se usa / tip) según la ruta, más un **glosario GEO/LLMO** buscable.
+- **Checklist «Tus primeros pasos» por rol** (`OnboardingChecklist.vue` en la Torre):
+  tareas reales enlazadas a módulos (learn-by-doing), barra de progreso, persistencia en
+  localStorage por cliente+rol, descartable y reabrible.
+- **Modelo de contenido** (`src/content/help.js`): glosario, ayuda por módulo y rutas de
+  onboarding por rol (admin / squad / marcas / horeca). Base ES, ampliable y migrable a config.
+
+### Pendiente (fases siguientes)
+- Fase 2: Academia por rol (lecciones con tareas guiadas + quiz de certificación) sobre el
+  módulo Formación. Fase 3: analítica de adopción (quién completó qué, módulos infrautilizados).
+
 ## [1.3.0-phase1] — 2026-07-19
 
 Hardening de seguridad para **publicación real** (Render full-stack).

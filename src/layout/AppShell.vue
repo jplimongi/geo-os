@@ -1,11 +1,13 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useClient } from '../stores/client'
 import { registry } from '../modules/registry'
+import HelpDrawer from '../components/HelpDrawer.vue'
 
 const client = useClient()
 const router = useRouter()
+const help = ref(false)
 
 const modules = computed(() => client.visibleModules(registry))
 const groups = computed(() => {
@@ -42,12 +44,14 @@ function logout() { client.logout(); router.push({ name: 'login' }) }
           <span class="muted"> · {{ client.feed?.period || '—' }}</span>
         </div>
         <div class="top__right">
+          <button class="help-btn" @click="help = true" title="Ayuda y glosario">?</button>
           <span class="pill" style="background:#EEF1F6;color:#5B6B82">{{ client.role?.label }}</span>
           <button class="btn btn--ghost" @click="logout">Salir</button>
         </div>
       </header>
       <main class="content"><router-view /></main>
     </div>
+    <HelpDrawer :open="help" @close="help = false" />
   </div>
 </template>
 <style scoped>
@@ -64,5 +68,7 @@ function logout() { client.logout(); router.push({ name: 'login' }) }
 .main{display:flex;flex-direction:column;min-width:0}
 .top{display:flex;justify-content:space-between;align-items:center;padding:14px 26px;background:var(--brand-surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
 .top__right{display:flex;align-items:center;gap:12px}
+.help-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--brand-surface);color:var(--brand-primary);font-weight:800;cursor:pointer;font-size:14px}
+.help-btn:hover{background:var(--brand-bg)}
 .content{padding:26px;max-width:1200px}
 </style>
