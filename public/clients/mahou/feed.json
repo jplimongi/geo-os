@@ -120,5 +120,13 @@
     { "cadence": "Semanal", "artifact": "Qué cambió esta semana", "owner": "Squad GEO", "channel": "Email" },
     { "cadence": "Mensual", "artifact": "Informe GEO white-label (.xlsx)", "owner": "Cupperlab", "channel": "Cliente" },
     { "cadence": "Trimestral", "artifact": "Comité (QBR)", "owner": "rT · Cupperlab", "channel": "COEJ" }
+  ],
+  "sources": [
+    { "provider": "DataForSEO", "feeds": "AI Volume · AI Overview / SERP", "modules": ["prompts", "ai-overview"], "status": "pendiente", "last_update": null },
+    { "provider": "SE Ranking", "feeds": "AI Visibility multi-motor · DIR · Backlinks", "modules": ["visibilidad", "autoridad"], "status": "pendiente", "last_update": null },
+    { "provider": "Ahrefs", "feeds": "Domain Rating (DR)", "modules": ["autoridad"], "status": "real", "last_update": "2026-06-25" },
+    { "provider": "Google BigQuery", "feeds": "Histórico IA: citas, menciones, dominios dominantes", "modules": ["data-ia", "brand-link", "torre"], "status": "real", "last_update": "2026-06-25" },
+    { "provider": "Google Analytics 4", "feeds": "Tráfico IA por marca y motor", "modules": ["trafico-ia"], "status": "pendiente", "last_update": null },
+    { "provider": "Google Business Profile", "feeds": "Señales Local / HORECA", "modules": ["horeca"], "status": "cualitativo", "last_update": "2026-06-25" }
   ]
 }

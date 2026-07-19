@@ -1,0 +1,23 @@
+# Render Blueprint — despliegue full-stack de GEO-OS (API + app compilada, un servicio).
+# En render.com: New → Blueprint → conecta el repo → Apply. Rellena las env "sync:false".
+services:
+  - type: web
+    name: geo-os
+    runtime: node
+    plan: starter            # 'starter' (o superior) permite disco persistente. 'free' = disco efímero.
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm run server
+    healthCheckPath: /api/health
+    envVars:
+      - key: SESSION_SECRET   # firma los tokens de sesión. Generado y estable.
+        generateValue: true
+      - key: APP_ORIGIN       # vacío = mismo origen (recomendado). O https://tu-dominio para CORS.
+        sync: false
+      - key: DATA_DIR         # disco persistente: secretos/auth/uso/acciones sobreviven redeploys.
+        value: /var/data
+      - key: ANTHROPIC_API_KEY # opcional (fallback global). Lo normal es key por cliente en Conexiones.
+        sync: false
+    disk:
+      name: geo-os-data
+      mountPath: /var/data
+      sizeGB: 1

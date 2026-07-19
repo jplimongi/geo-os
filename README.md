@@ -32,6 +32,12 @@ Sin backend, la app sigue abriendo con el feed estático (modo degradado); pero 
 - **Action Queue persistente** en `server/data/<cliente>-actions.json` (CRUD real vía API).
 - **Torre** refleja en "qué hacer" las acciones vivas del backend.
 
+## Robustez operativa (para uso diario, no demo)
+
+- **Re-medición LLM endurecida:** modelo por defecto `claude-sonnet-5` (override por `ANTHROPIC_MODEL`/`OPENAI_MODEL`), timeout duro (`LLM_TIMEOUT_MS`, 30s), errores 429/5xx/timeout traducidos a mensaje accionable, y detección de marca robusta (insensible a acentos, con límites de palabra → sin falsos positivos por subcadena).
+- **Persistencia a prueba de fallos:** la Action Queue se escribe de forma **atómica** (tmp+rename) y las escrituras se **serializan por cliente** (sin condición de carrera lectura-modificación-escritura).
+- **Contrato de datos + validación runtime:** [`CONTRATO_DATOS_feed.md`](CONTRATO_DATOS_feed.md) define lo que Relevant debe entregar; [`src/feedContract.js`](src/feedContract.js) lo valida en runtime y expone `client.feedHealth`. El módulo **Fuentes & Datos** muestra el cockpit: backend online/offline, proveedor LLM activo, cobertura de fuentes e **integridad del feed** (avisa qué secciones llegan vacías, para que un volcado parcial no deje módulos silenciosamente mudos).
+
 ## Pendiente de Relevant (integración de datos)
 
 El `feed.json` (visibilidad, autoridad, volúmenes, brand vs link) hoy es fichero. La ingesta real
@@ -63,9 +69,9 @@ Cliente activo por env: `VITE_CLIENT=otrocliente npm run dev` (por defecto `maho
 
 ## Estado de los módulos (Fase 1)
 
-**Implementados leyendo del feed:** Torre de Control · Visibilidad IA / GEO Twin · Data Resultados IA · Brand vs Link · Prompts & Tracking · Autoridad · Competidores · Riesgo & Alertas · Action Queue · Gobierno & Roles.
+**Los 18 módulos están implementados y leen del feed** (config-driven): Torre de Control · Ciclo GEO · Visibilidad IA / GEO Twin · Data Resultados IA · Brand vs Link · Prompts & Tracking · Narrativas & Claims · Autoridad · Tráfico IA (GA4) · Competidores · Local/HORECA · AI Overview/SERP · Fuentes & Datos · Action Queue · Riesgo & Alertas · Agentes · Gobierno & Roles · Formación · Reporting (+ Alta de Cliente, solo platform-admin).
 
-**Registrados como stub** (cableados en nav/router/role-gating, pendientes de vista bespoke): Ciclo GEO · Narrativas & Claims · Tráfico IA (GA4) · Local/HORECA · AI Overview/SERP · Agentes · Formación · Reporting.
+Ninguno es un placeholder: cada uno renderiza su sección del feed con badge de estado. Lo que hoy llega vacío (p.ej. `ga4_ai_traffic`, `serp`) es **dato pendiente del pipeline de Relevant**, no vista sin construir — y el cockpit de **Fuentes & Datos** lo señala explícitamente (ver más abajo).
 
 ## Regla de oro (heredada de GEO-OS)
 

@@ -4,3 +4,7 @@ dist
 *.local
 .env
 *-service-account.json
+# Secretos por cliente (API keys LLM + credenciales de proveedores). NUNCA a git.
+server/data/*-secrets.json
+# Hashes de credenciales de login por cliente. NUNCA a git.
+server/data/*-auth.json

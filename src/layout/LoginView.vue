@@ -5,12 +5,16 @@ import { useClient } from '../stores/client'
 
 const client = useClient()
 const router = useRouter()
-const user = ref(''), pass = ref(''), err = ref('')
+const user = ref(''), pass = ref(''), err = ref(''), busy = ref(false)
 
-function submit() {
-  const role = client.login(user.value, pass.value)
-  if (role) router.push({ name: role.landing || 'torre' })
-  else err.value = 'Credenciales no válidas'
+async function submit() {
+  err.value = ''; busy.value = true
+  try {
+    const role = await client.login(user.value, pass.value)
+    router.push({ name: role.landing || 'torre' })
+  } catch (e) {
+    err.value = e.status === 429 ? e.message : 'Usuario o contraseña incorrectos'
+  } finally { busy.value = false }
 }
 </script>
 <template>
@@ -25,11 +29,8 @@ function submit() {
       </div>
       <label>Usuario<input v-model="user" autocomplete="username" /></label>
       <label>Contraseña<input v-model="pass" type="password" autocomplete="current-password" /></label>
-      <button class="btn" type="submit">Entrar</button>
+      <button class="btn" type="submit" :disabled="busy">{{ busy ? 'Entrando…' : 'Entrar' }}</button>
       <p v-if="err" style="color:var(--warn);font-size:13px;margin:4px 0 0">{{ err }}</p>
-      <p class="muted" style="font-size:11px;margin-top:10px">
-        Demo Mahou · admin / rtcupper2026* · marcasuser / msmmarcas2026*
-      </p>
     </form>
   </div>
 </template>

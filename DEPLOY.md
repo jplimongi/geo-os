@@ -1,61 +1,55 @@
-# Deploy de GEO-OS
+# Deploy de GEO-OS (publicación real, full-stack)
 
-Dos mitades:
-- **Frontend** (build estático) → GitHub Pages. Muestra toda la app.
-- **Backend** (Express + persistencia + re-medición LLM) → necesita un host Node (Render/Railway). GitHub Pages **no** puede ejecutarlo.
+Tras el hardening (v1.3), GEO-OS se publica como **un solo servicio Node en Render** que sirve
+la API + la app compilada. El login es real (server-side), los datos de negocio y los secretos
+van por API autenticada, y la config se sirve saneada (sin credenciales). **GitHub Pages
+(solo-frontend) ya no sirve para producción**: la app necesita el backend para todo.
 
-En GitHub Pages la app corre en **modo degradado**: navegación, 18 módulos, role-gating y datos del feed funcionan; el loop con persistencia y el "Re-mide" real muestran su aviso (necesitan backend). Para el loop en vivo online, usa la opción B.
+## A · Publicar en Render (Blueprint, recomendado)
 
----
+1. Sube el repo a GitHub (una vez):
+   ```bash
+   cd geo-os
+   git add . && git commit -m "GEO-OS hardening + deploy"
+   git branch -M main
+   git remote add origin https://github.com/<tu-org>/geo-os.git
+   git push -u origin main
+   ```
+   `node_modules`, `dist`, `.env` y **todos los `*-secrets.json` / `*-auth.json`** están en
+   `.gitignore` — no se suben.
 
-## A · Frontend en TU GitHub Pages (para enseñarlo) — recomendado
+2. En **render.com → New → Blueprint** → conecta el repo. El [`render.yaml`](render.yaml) define
+   build, start, health check, disco persistente y variables. Pulsa **Apply**.
 
-Desde `geo-os/`, una sola vez crea el repo en tu GitHub (web: New repository → nombre `geo-os` → público → Create) y conéctalo:
+3. Rellena las variables marcadas `sync:false`:
+   - `SESSION_SECRET` — la genera Render (firma los tokens de sesión).
+   - `APP_ORIGIN` — déjala vacía (mismo origen). Ponla solo si el front va en otro dominio.
+   - `DATA_DIR` — ya apunta a `/var/data` (disco persistente): secretos, auth, uso y acciones
+     **sobreviven a los redeploys**.
+   - `ANTHROPIC_API_KEY` — opcional (fallback global). Lo normal es fijar la key **por cliente**
+     desde *Parametrización → Conexiones*.
 
-```bash
-cd ~/Documents/Claude/Projects/"Mahou Reloaded"/geo-os
-git init
-git add .
-git commit -m "GEO-OS Fase 1"
-git branch -M main
-git remote add origin https://github.com/jplimongi/geo-os.git
-git push -u origin main
-```
+4. Deploy. Render da una URL tipo `https://geo-os.onrender.com` con todo funcionando.
 
-Publica (build + push a la rama gh-pages, automático):
+> **Plan:** el disco persistente requiere plan `starter` o superior. En `free` el disco es
+> efímero (secretos/logins se reinician en cada redeploy) — vale para probar, no para operar.
 
-```bash
-npm install
-npm run deploy
-```
+## Primer arranque (importante)
 
-Luego en GitHub: repo **Settings → Pages → Branch: `gh-pages` / root → Save**. En ~1 min tu URL queda en:
+Al arrancar por primera vez, el servidor **siembra los logins** (`<id>-auth.json`) desde las
+contraseñas semilla del `config.json` y a partir de ahí manda `auth.json`. Entra con las
+credenciales semilla (p.ej. `admin` / `rtcupper2026*`) y **cámbialas** en
+*Parametrización → Roles & accesos*: quedan hasheadas server-side y la semilla deja de aplicar.
 
-```
-https://jplimongi.github.io/geo-os/
-```
+## Seguridad aplicada (resumen)
 
-Para actualizar tras cambios: `npm run deploy` otra vez.
+- Login server-side con contraseñas **hasheadas** (scrypt); nunca viajan al navegador.
+- Todas las rutas `/api/client/:id/*` exigen **token de sesión** válido y del cliente correcto
+  (aislamiento entre tenants). `POST /clients` exige admin de plataforma.
+- **Secretos** (API keys) y **auth** fuera de git y nunca devueltos por la API (solo estado).
+- Feed y config no se sirven como estáticos; CORS restringido; rate-limit en login y re-medición.
+- Presupuesto por cliente con modo bloqueo (402 al agotarse).
 
-> Reutilizar `jplimongi/geo-os-msm` (el mock viejo) también vale, pero lo sobrescribe. Mejor repo nuevo para no perder la demo anterior.
+## B · Local sin terminal
 
----
-
-## B · App completa (con backend, loop en vivo) — Render
-
-Un solo servicio: el Express ya sirve el `dist/` compilado (mismo origen que la API).
-
-1. Sube el repo a GitHub (pasos de arriba).
-2. En **render.com** → New → Web Service → conecta el repo.
-   - **Build command:** `npm install && npm run build`
-   - **Start command:** `npm run server`
-   - **Environment:** `ANTHROPIC_API_KEY = sk-ant-...` (o `OPENAI_API_KEY`)
-3. Deploy. Render te da una URL tipo `https://geo-os.onrender.com` con **todo funcionando**: persistencia + re-medición real.
-
-> Nota: en Render el plan free tiene disco efímero — la Action Queue en fichero se reinicia al redeploy. Para persistencia dura, migrar a Postgres/BigQuery (Fase 2).
-
----
-
-## Límite de esta sesión
-
-El push a GitHub no se puede hacer desde aquí (el conector de GitHub no está autorizado y la sesión es no interactiva). Por eso los comandos de arriba los ejecutas tú desde tu Mac; el proyecto ya está listo para ello (`npm run deploy` incluido).
+Doble clic en `GEO-OS.command` (arranca API + front y abre el navegador). Ver README.
