@@ -150,7 +150,8 @@ app.post('/api/client/:id/login', async (req, res) => {
   const role = (cfg.roles || []).find(r => r.id === entry[0])
   if (!role) return res.status(403).json({ error: 'Rol sin definición en config' })
   const token = signToken({ cid: id, roleId: role.id, platform_admin: role.platform_admin === true, exp: Date.now() + 12 * 3600 * 1000 })
-  res.json({ token, role })  // el rol NO lleva credenciales
+  const { credential, ...safeRole } = role  // no devolver credenciales al navegador
+  res.json({ token, role: safeRole })
 })
 
 // Config PÚBLICA saneada (sin credenciales): la usa el login para tema/identidad.

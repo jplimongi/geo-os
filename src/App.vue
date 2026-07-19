@@ -1,9 +1,16 @@
 <script setup>
 import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useClient } from './stores/client'
 
 const client = useClient()
-onMounted(() => client.load())
+const router = useRouter()
+// Carga la config y, si no hay sesión, aterriza en login (evita la carrera del guard
+// que dejaba entrar a un módulo vacío antes de terminar la carga async).
+onMounted(async () => {
+  await client.load()
+  if (!client.isAuthed && router.currentRoute.value.name !== 'login') router.replace({ name: 'login' })
+})
 </script>
 
 <template>

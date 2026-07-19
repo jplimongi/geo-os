@@ -18,6 +18,7 @@ async function req(path, opts = {}) {
 }
 
 export const api = {
+  setToken,  // fija el token de sesión que req() envía en cada llamada
   async health() { try { await req('/health'); return true } catch { return false } },
   healthInfo: () => req('/health').catch(() => null),  // { ok, llm, ts } o null si backend off
   login: (id, user, pass) => req(`/client/${id}/login`, { method: 'POST', body: JSON.stringify({ user, pass }) }),
