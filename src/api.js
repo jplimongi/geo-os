@@ -41,5 +41,16 @@ export const api = {
   getActions: (id) => req(`/client/${id}/actions`),
   createAction: (id, action) => req(`/client/${id}/actions`, { method: 'POST', body: JSON.stringify(action) }),
   updateAction: (id, aid, patch) => req(`/client/${id}/actions/${aid}`, { method: 'PATCH', body: JSON.stringify(patch) }),
-  remeasure: (id, prompt, brand) => req(`/client/${id}/remeasure`, { method: 'POST', body: JSON.stringify({ prompt, brand }) })
+  remeasure: (id, prompt, brand) => req(`/client/${id}/remeasure`, { method: 'POST', body: JSON.stringify({ prompt, brand }) }),
+  // Fase 3 · Adopción: Academia (progreso propio) + tracking de uso + panel agregado (admin)
+  getAcademy: (id) => req(`/client/${id}/academy`),
+  saveAcademy: (id, paths) => req(`/client/${id}/academy`, { method: 'PUT', body: JSON.stringify({ paths }) }),
+  // beacon: best-effort, no rompe la navegación si falla
+  track: (id, moduleId) => req(`/client/${id}/track`, { method: 'POST', body: JSON.stringify({ moduleId }) }).catch(() => {}),
+  getAdoption: (id) => req(`/client/${id}/adoption`),
+  // Comentarios de mejora (post-its)
+  getComments: (id, module) => req(`/client/${id}/comments${module ? `?module=${encodeURIComponent(module)}` : ''}`),
+  createComment: (id, body) => req(`/client/${id}/comments`, { method: 'POST', body: JSON.stringify(body) }),
+  updateComment: (id, cid, patch) => req(`/client/${id}/comments/${cid}`, { method: 'PATCH', body: JSON.stringify(patch) }),
+  deleteComment: (id, cid) => req(`/client/${id}/comments/${cid}`, { method: 'DELETE' })
 }

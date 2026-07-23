@@ -21,6 +21,7 @@ export const registry = [
   { id: 'costes',       path: '/costes',       title: 'Costes & Uso',         group: 'Operación',  icon: '💳', origin: 'GEO-OS', requiresFullAccess: true, comp: () => import('./Costes.vue') },
   { id: 'parametrizacion', path: '/parametrizacion', title: 'Parametrización', group: 'Plataforma', icon: '🎛', origin: 'GEO-OS', requiresFullAccess: true, comp: () => import('./Parametrizacion.vue') },
   { id: 'formacion',    path: '/formacion',    title: 'Formación',            group: 'Operación',  icon: '🎓', origin: 'GEO-OS',        comp: () => import('./Formacion.vue') },
+  { id: 'adopcion',     path: '/adopcion',     title: 'Adopción',             group: 'Operación',  icon: '📊', origin: 'GEO-OS', requiresFullAccess: true, comp: () => import('./Adopcion.vue') },
   { id: 'reporting',    path: '/reporting',    title: 'Reporting',            group: 'Operación',  icon: '📄', origin: 'GEO-OS+Relevant', comp: () => import('./Reporting.vue') },
   { id: 'alta-cliente', path: '/alta-cliente', title: 'Alta de Cliente',      group: 'Plataforma', icon: '✚', origin: 'GEO-OS', requiresPlatformAdmin: true, comp: () => import('./AltaCliente.vue') }
 ]

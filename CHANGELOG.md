@@ -3,6 +3,31 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/).
 Versionado semántico. Fase 1 = core config-driven multicliente.
 
+## [1.6.0-phase1] — 2026-07-23
+
+Formación Fase 3 (Adopción) + comentarios de mejora.
+
+### Añadido
+- **Persistencia backend de la Academia** (`<id>-academy.json` en el volumen, por rol): la
+  identidad la deriva el server del token (`roleId`), no falseable desde el cliente. Endpoints
+  `GET/PUT /api/client/:id/academy`. `Formacion.vue` pasa de localStorage a backend con
+  **caché offline** y **migración automática** del progreso previo la primera vez.
+- **Tracking de uso de módulos**: beacon `POST /api/client/:id/track` en el `afterEach` del
+  router (best-effort, dedupe por apertura). Contadores **agregados por rol×módulo** en
+  `<id>-adoption.json` (sin log de eventos, sin PII).
+- **Panel Adopción** (`Adopcion.vue`, `requiresFullAccess`, ruta `/adopcion`): certificación
+  por rol×ruta y uso de módulos con **infrautilizados destacados** (sin uso / poco uso).
+  Endpoint agregado `GET /api/client/:id/adoption` (solo acceso total).
+- **Comentarios de mejora (post-its clavados)**: `CommentsLayer.vue` montado en `AppShell`.
+  Cualquier usuario logueado clava notas ancladas al módulo y a una posición (x,y % viewport),
+  arrastrables; autor o acceso total edita/borra, cualquiera resuelve/reabre. Backend
+  `GET/POST/PATCH/DELETE /api/client/:id/comments` (`<id>-comments.json`).
+
+### Pendiente
+- Operativo: cambiar contraseñas semilla y meter la API key del LLM (cuando el cliente lo pida).
+- Integración de datos real (Relevant): sustituir `feed.json` por el pipeline (contrato en
+  `CONTRATO_DATOS_feed.md`).
+
 ## [1.5.0-phase1] — 2026-07-19
 
 Capa de formación — Fase 2: Academia por rol con lecciones y certificación.

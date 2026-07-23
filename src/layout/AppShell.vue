@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useClient } from '../stores/client'
 import { registry } from '../modules/registry'
 import HelpDrawer from '../components/HelpDrawer.vue'
+import CommentsLayer from '../components/CommentsLayer.vue'
 
 const client = useClient()
 const router = useRouter()
@@ -52,6 +53,7 @@ function logout() { client.logout(); router.push({ name: 'login' }) }
       <main class="content"><router-view /></main>
     </div>
     <HelpDrawer :open="help" @close="help = false" />
+    <CommentsLayer />
   </div>
 </template>
 <style scoped>

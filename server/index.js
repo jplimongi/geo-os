@@ -53,6 +53,12 @@ function withWriteLock(id, fn) {
 }
 const actionsPath = (id) => path.join(DATA, `${id}-actions.json`)
 const authPath = (id) => path.join(DATA, `${id}-auth.json`)
+// Fase 3 · Adopción: progreso/certificación de la Academia y contadores de uso de módulos,
+// ambos por ROL (los logins son por rol, no por persona). Ficheros acotados en el volumen.
+const academyPath = (id) => path.join(DATA, `${id}-academy.json`)
+const adoptionPath = (id) => path.join(DATA, `${id}-adoption.json`)
+// Comentarios de mejora (post-its clavados por módulo): feedback colaborativo de Relevant/MSM.
+const commentsPath = (id) => path.join(DATA, `${id}-comments.json`)
 
 // ---------- AUTENTICACIÓN ----------
 // Hash de contraseña con scrypt (nativo, sin dependencias). Formato "salt:hash".
@@ -108,6 +114,14 @@ function sanitizeConfig(cfg, keepUser = false) {
     roles: (cfg.roles || []).map(({ credential, ...r }) =>
       keepUser ? { ...r, credential: { user: credential?.user } } : r)
   }
+}
+
+// ¿El rol del token tiene acceso total? platform_admin o sees:'all' en el config.
+// Se resuelve server-side (el token no lleva `sees`) para gatear paneles de admin.
+async function roleHasFullAccess(id, roleId, platformAdmin) {
+  if (platformAdmin) return true
+  const cfg = await readJson(path.join(CLIENTS, id, 'config.json'))
+  return (cfg?.roles || []).find(r => r.id === roleId)?.sees === 'all'
 }
 
 // Middleware: exige token válido cuyo cid coincida con el cliente de la ruta.
@@ -311,6 +325,146 @@ app.patch('/api/client/:id/actions/:aid', requireAuth, async (req, res) => {
     res.status(result.code).json(result.body)
   } catch (e) { res.status(500).json({ error: 'No se pudo actualizar la acción: ' + e.message }) }
 })
+
+// ---------- FASE 3 · ADOPCIÓN ----------
+// Progreso/certificación de la Academia, persistido por ROL en el volumen. La identidad
+// la deriva el server del token (roleId): no se puede falsear desde el cliente.
+// Estructura del fichero: { [roleId]: { paths: { [pathId]: {done:[], cert:{score,date}} }, updated } }
+
+// Mi propio progreso (para hidratar la Academia al entrar).
+app.get('/api/client/:id/academy', requireAuth, async (req, res) => {
+  const all = await readJson(academyPath(req.params.id), {})
+  res.json(all[req.auth.roleId] || { paths: {} })
+})
+
+// Guarda MI progreso (el del rol del token). Reemplaza el bloque de este rol.
+app.put('/api/client/:id/academy', requireAuth, async (req, res) => {
+  const id = req.params.id
+  const paths = req.body?.paths
+  if (!paths || typeof paths !== 'object') return res.status(400).json({ error: 'falta paths' })
+  try {
+    const saved = await withWriteLock(`academy-${id}`, async () => {
+      const all = await readJson(academyPath(id), {})
+      all[req.auth.roleId] = { paths, updated: new Date().toISOString() }
+      await writeJson(academyPath(id), all)
+      return all[req.auth.roleId]
+    })
+    res.json({ ok: true, progress: saved })
+  } catch (e) { res.status(500).json({ error: 'No se pudo guardar el progreso: ' + e.message }) }
+})
+
+// Beacon de uso de módulos: incrementa un contador agregado por rol×módulo (sin log de eventos,
+// sin PII). moduleId saneado y acotado; el nº de módulos es fijo → el fichero queda pequeño.
+// Estructura: { [roleId]: { [moduleId]: { count, last } } }
+app.post('/api/client/:id/track', requireAuth, async (req, res) => {
+  const id = req.params.id
+  const mid = String(req.body?.moduleId || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40)
+  if (!mid) return res.status(400).json({ error: 'falta moduleId' })
+  try {
+    await withWriteLock(`adoption-${id}`, async () => {
+      const all = await readJson(adoptionPath(id), {})
+      const role = all[req.auth.roleId] || (all[req.auth.roleId] = {})
+      const cell = role[mid] || (role[mid] = { count: 0, last: null })
+      cell.count++; cell.last = new Date().toISOString()
+      await writeJson(adoptionPath(id), all)
+    })
+    res.status(204).end()
+  } catch (e) { res.status(500).json({ error: 'No se pudo registrar el uso: ' + e.message }) }
+})
+
+// Panel de Adopción (solo acceso total): certificación por rol + uso de módulos por rol.
+// Devuelve también los roles del config para pintar filas aunque no tengan datos aún.
+app.get('/api/client/:id/adoption', requireAuth, async (req, res) => {
+  const id = req.params.id
+  if (!(await roleHasFullAccess(id, req.auth.roleId, req.auth.platform_admin)))
+    return res.status(403).json({ error: 'Requiere acceso total' })
+  const cfg = await readJson(path.join(CLIENTS, id, 'config.json'), {})
+  const roles = (cfg.roles || []).map(r => ({ id: r.id, user: r.credential?.user || r.id, label: r.label || r.id, sees: r.sees }))
+  res.json({
+    generated: new Date().toISOString(), roles,
+    academy: await readJson(academyPath(id), {}),
+    modules: await readJson(adoptionPath(id), {})
+  })
+})
+
+// ---------- COMENTARIOS DE MEJORA (post-its) ----------
+// Notas ancladas a un módulo y una posición (x,y en % del área de contenido). Cualquier
+// usuario logueado deja/ve; autor o acceso total resuelve/borra. Estructura: array de
+// { id, module, x, y, text, author:{role,label}, status:'open'|'resolved', created, resolved_by }
+app.get('/api/client/:id/comments', requireAuth, async (req, res) => {
+  const all = await readJson(commentsPath(req.params.id), [])
+  res.json(req.query.module ? all.filter(c => c.module === req.query.module) : all)
+})
+
+app.post('/api/client/:id/comments', requireAuth, async (req, res) => {
+  const id = req.params.id
+  const { module, x, y, text } = req.body || {}
+  if (!module || typeof text !== 'string' || !text.trim()) return res.status(400).json({ error: 'faltan module y text' })
+  const cfg = await readJson(path.join(CLIENTS, id, 'config.json'), {})
+  const label = (cfg.roles || []).find(r => r.id === req.auth.roleId)?.label || req.auth.roleId
+  try {
+    const c = await withWriteLock(`comments-${id}`, async () => {
+      const all = await readJson(commentsPath(id), [])
+      const item = {
+        id: `c-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        module: String(module).slice(0, 40),
+        x: clampPct(x), y: clampPct(y),
+        text: String(text).slice(0, 2000),
+        author: { role: req.auth.roleId, label },
+        status: 'open', created: new Date().toISOString()
+      }
+      all.unshift(item)
+      await writeJson(commentsPath(id), all)
+      return item
+    })
+    res.status(201).json(c)
+  } catch (e) { res.status(500).json({ error: 'No se pudo guardar el comentario: ' + e.message }) }
+})
+
+app.patch('/api/client/:id/comments/:cid', requireAuth, async (req, res) => {
+  const id = req.params.id
+  try {
+    const result = await withWriteLock(`comments-${id}`, async () => {
+      const all = await readJson(commentsPath(id), [])
+      const c = all.find(x => x.id === req.params.cid)
+      if (!c) return { code: 404, body: { error: 'comentario no encontrado' } }
+      const b = req.body || {}
+      const isOwner = c.author?.role === req.auth.roleId
+      const full = await roleHasFullAccess(id, req.auth.roleId, req.auth.platform_admin)
+      if (b.x != null) c.x = clampPct(b.x)                       // reposicionar (arrastrar): cualquiera
+      if (b.y != null) c.y = clampPct(b.y)
+      if (b.status === 'open' || b.status === 'resolved') {       // resolver/reabrir: cualquiera, se registra quién
+        c.status = b.status
+        c.resolved_by = b.status === 'resolved' ? (c.author?.label && isOwner ? c.author.label : req.auth.roleId) : null
+      }
+      if (typeof b.text === 'string') {                           // editar texto: solo autor o acceso total
+        if (!isOwner && !full) return { code: 403, body: { error: 'Solo el autor o un admin puede editar el texto' } }
+        c.text = b.text.slice(0, 2000)
+      }
+      await writeJson(commentsPath(id), all)
+      return { code: 200, body: c }
+    })
+    res.status(result.code).json(result.body)
+  } catch (e) { res.status(500).json({ error: 'No se pudo actualizar el comentario: ' + e.message }) }
+})
+
+app.delete('/api/client/:id/comments/:cid', requireAuth, async (req, res) => {
+  const id = req.params.id
+  try {
+    const result = await withWriteLock(`comments-${id}`, async () => {
+      const all = await readJson(commentsPath(id), [])
+      const c = all.find(x => x.id === req.params.cid)
+      if (!c) return { code: 404, body: { error: 'comentario no encontrado' } }
+      const full = await roleHasFullAccess(id, req.auth.roleId, req.auth.platform_admin)
+      if (c.author?.role !== req.auth.roleId && !full) return { code: 403, body: { error: 'Solo el autor o un admin puede borrar' } }
+      await writeJson(commentsPath(id), all.filter(x => x.id !== req.params.cid))
+      return { code: 200, body: { ok: true } }
+    })
+    res.status(result.code).json(result.body)
+  } catch (e) { res.status(500).json({ error: 'No se pudo borrar el comentario: ' + e.message }) }
+})
+// Acota una coordenada a [0,100] (% del área de contenido); tolera basura → 50.
+function clampPct(v) { const n = Number(v); return Number.isFinite(n) ? Math.max(0, Math.min(100, n)) : 50 }
 
 // RE-MEDICIÓN REAL: pregunta al LLM el prompt y detecta si la marca es citada/mencionada.
 // Usa la credencial LLM DEL CLIENTE, controla su presupuesto y registra el coste real.

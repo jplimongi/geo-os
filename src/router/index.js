@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { registry } from '../modules/registry'
 import { useClient } from '../stores/client'
+import { api } from '../api'
 
 const routes = [
   { path: '/login', name: 'login', component: () => import('../layout/LoginView.vue') },
@@ -27,4 +28,15 @@ router.beforeEach((to) => {
     return { name: client.role.landing || 'torre' }
   }
   return true
+})
+
+// Adopción (Fase 3): registra el uso de módulos (beacon agregado por rol). Solo cuenta
+// aperturas reales (cambia de módulo) para no inflar con recargas del mismo módulo.
+let lastTracked = null
+router.afterEach((to) => {
+  const client = useClient()
+  const mid = to.meta?.moduleId
+  if (!mid || !client.isAuthed || mid === lastTracked) return
+  lastTracked = mid
+  api.track(client.id, mid)  // best-effort (no bloquea la navegación)
 })

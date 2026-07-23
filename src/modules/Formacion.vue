@@ -1,9 +1,11 @@
 <script setup>
-// ACADEMIA GEO-OS (Fase 2): rutas por rol con lecciones (tarea guiada) + examen de
-// certificación. Progreso y certificación persistidos en localStorage por cliente+rol.
-import { ref, reactive, computed, watch } from 'vue'
+// ACADEMIA GEO-OS. Fase 3: el progreso/certificación se persiste en el BACKEND por rol
+// (para que el admin lo vea en Adopción). localStorage queda como caché offline y como
+// origen de migración del progreso previo. Estructura: { [pathId]: { done:[], cert } }.
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useClient } from '../stores/client'
+import { api } from '../api'
 import { pathsForRole, PASS } from '../content/academy'
 
 const client = useClient()
@@ -13,10 +15,23 @@ const sel = ref(myPaths.value[0]?.id)
 const path = computed(() => myPaths.value.find(p => p.id === sel.value) || myPaths.value[0])
 
 const key = computed(() => `geoos:academy:${client.id}:${client.role?.id || 'x'}`)
-function load() { try { return JSON.parse(localStorage.getItem(key.value) || '{}') } catch { return {} } }
-const store = ref(load())
-function save() { try { localStorage.setItem(key.value, JSON.stringify(store.value)) } catch {} }
+function loadCache() { try { return JSON.parse(localStorage.getItem(key.value) || '{}') } catch { return {} } }
+const store = ref(loadCache())
+function saveCache() { try { localStorage.setItem(key.value, JSON.stringify(store.value)) } catch {} }
+// Persiste en backend (best-effort): si falla, el progreso sobrevive en la caché local.
+async function persist() { saveCache(); try { await api.saveAcademy(client.id, store.value) } catch {} }
 function pdata(id) { return store.value[id] || { done: [], cert: null } }
+
+// Al entrar: el backend manda. Si no hay nada en backend pero sí en caché local (progreso
+// previo a Fase 3), se migra al backend una sola vez.
+onMounted(async () => {
+  try {
+    const remote = await api.getAcademy(client.id)
+    const rp = remote?.paths || {}
+    if (Object.keys(rp).length) { store.value = rp; saveCache() }
+    else if (Object.keys(store.value).length) { await api.saveAcademy(client.id, store.value) }
+  } catch {}
+})
 
 const done = computed(() => pdata(path.value.id).done)
 const cert = computed(() => pdata(path.value.id).cert)
@@ -28,7 +43,7 @@ const open = ref(null)
 function toggleLesson(id) {
   const d = pdata(path.value.id); const s = new Set(d.done)
   s.has(id) ? s.delete(id) : s.add(id)
-  store.value = { ...store.value, [path.value.id]: { ...d, done: [...s] } }; save()
+  store.value = { ...store.value, [path.value.id]: { ...d, done: [...s] } }; persist()
 }
 function goTask(t) { if (t?.module) router.push({ name: t.module }) }
 
@@ -46,7 +61,7 @@ function grade() {
   if (result.value.pass) {
     const d = pdata(path.value.id)
     store.value = { ...store.value, [path.value.id]: { ...d, cert: { score: Math.round(score * 100), date: new Date().toISOString().slice(0, 10) } } }
-    save()
+    persist()
   }
 }
 function closeExam() { examMode.value = false; result.value = null }
