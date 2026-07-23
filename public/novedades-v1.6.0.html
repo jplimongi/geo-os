@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GEO-OS v1.6.0 · Cupperlab × Relevant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cyan:#00CBF0; --orange:#FF553F; --navy:#063346;
+    --ink-700:#2B3D47; --ink-500:#6B7780; --ink-300:#C4CCD2;
+    --ink-100:#F2F4F6; --ink-50:#F8FAFB; --white:#fff;
+    --grad:linear-gradient(90deg,#FF553F 0%,#00CBF0 50%,#FFFFFF 100%);
+    --font:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--font);color:var(--navy);background:var(--ink-50);
+    font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .page{max-width:900px;margin:0 auto;background:var(--white);
+    box-shadow:0 4px 40px rgba(6,51,70,.08)}
+
+  /* HERO */
+  .hero{background:var(--navy);color:#fff;padding:44px 48px 40px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-120px;top:-120px;width:360px;height:360px;
+    border-radius:50%;background:var(--grad);filter:blur(70px);opacity:.35}
+  .brandline{display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;z-index:1}
+  .wordmark{font-weight:700;font-size:22px;letter-spacing:-.01em;lowercase}
+  .wordmark .c{color:var(--cyan)} .wordmark .l{color:var(--orange)}
+  .cobrand{font-size:12px;font-weight:500;color:#9fb2bd;letter-spacing:.04em}
+  .cobrand b{color:#fff;font-weight:700}
+  .eyebrow{position:relative;z-index:1;margin-top:34px;font-size:11px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.09em;color:var(--cyan)}
+  h1{position:relative;z-index:1;font-size:40px;line-height:1.1;font-weight:700;
+    letter-spacing:-.01em;margin:10px 0 12px;max-width:20ch}
+  .lead{position:relative;z-index:1;font-size:17px;font-weight:300;color:#d6e2e8;max-width:60ch;margin:0}
+  .gradbar{height:5px;background:var(--grad)}
+
+  /* BODY */
+  .body{padding:40px 48px 8px}
+  .intro{font-size:16px;color:var(--ink-700);max-width:66ch;margin:0 0 30px}
+  .block{margin:0 0 34px}
+  .kicker{display:inline-flex;align-items:center;gap:9px;font-size:12px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.06em;color:var(--ink-500);margin-bottom:12px}
+  .kicker .tag{width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;
+    justify-content:center;font-size:14px;color:#fff}
+  .tag.cy{background:var(--cyan)} .tag.or{background:var(--orange)}
+  h2{font-size:23px;font-weight:700;letter-spacing:-.01em;margin:0 0 10px}
+  .block > p{font-size:15px;color:var(--ink-700);margin:0 0 16px;max-width:68ch}
+  ul.feat{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  ul.feat li{position:relative;padding:12px 14px 12px 40px;background:var(--ink-50);
+    border:1px solid var(--ink-100);border-radius:12px;font-size:14.5px;color:var(--ink-700)}
+  ul.feat li::before{content:"";position:absolute;left:15px;top:17px;width:9px;height:9px;
+    border-radius:50%;background:var(--cyan)}
+  .block.human ul.feat li::before{background:var(--orange)}
+  ul.feat li b{color:var(--navy)}
+
+  /* steps */
+  ol.steps{counter-reset:s;list-style:none;padding:0;margin:6px 0 0;display:grid;gap:10px}
+  ol.steps li{counter-increment:s;position:relative;padding:11px 14px 11px 46px;font-size:14.5px;color:var(--ink-700)}
+  ol.steps li::before{content:counter(s);position:absolute;left:12px;top:9px;width:24px;height:24px;
+    border-radius:50%;background:var(--orange);color:#fff;font-weight:700;font-size:13px;
+    display:flex;align-items:center;justify-content:center}
+
+  /* access card */
+  .access{margin:8px 48px 0;background:var(--navy);color:#fff;border-radius:16px;padding:26px 28px;
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px}
+  .access .lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--cyan);margin-bottom:6px}
+  .access a{color:#fff;font-weight:700;font-size:19px;text-decoration:none;border-bottom:2px solid var(--orange);padding-bottom:2px}
+  .access .note{font-size:13px;color:#9fb2bd;max-width:34ch}
+
+  .note-box{margin:26px 48px 0;padding:14px 18px;border-left:3px solid var(--cyan);
+    background:var(--ink-50);border-radius:0 10px 10px 0;font-size:13.5px;color:var(--ink-700)}
+  .note-box b{color:var(--navy)}
+
+  /* footer */
+  footer{margin-top:36px;padding:26px 48px 30px;border-top:1px solid var(--ink-100);
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+  .tagline{font-size:14px;color:var(--ink-500)}
+  .tagline b{color:var(--navy);font-weight:700}
+  .meta{font-size:12px;color:var(--ink-500);text-align:right}
+  @media(max-width:640px){
+    .hero,.body{padding-left:26px;padding-right:26px}
+    .access,.note-box,footer{margin-left:26px;margin-right:26px}
+    h1{font-size:30px}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <div class="brandline">
+      <div class="wordmark"><span class="c">cupper</span><span class="l">lab</span></div>
+      <div class="cobrand">para <b>Relevant Traffic</b> · Mahou San Miguel</div>
+    </div>
+    <div class="eyebrow">GEO-OS · Novedades v1.6.0</div>
+    <h1>Ver quién se forma, qué se usa y dónde mejorar</h1>
+    <p class="lead">Dos añadidos a la plataforma: un panel de adopción para el equipo y un canal
+      de comentarios para que dejéis feedback sin salir de la herramienta.</p>
+  </header>
+  <div class="gradbar"></div>
+
+  <main class="body">
+    <p class="intro">GEO-OS suma dos capacidades pensadas para operar el día a día del GEO de Mahou
+      San Miguel y para que Relevant tenga voz directa sobre el producto. Aquí va lo que cambia y
+      cómo se usa.</p>
+
+    <section class="block">
+      <div class="kicker"><span class="tag cy">📊</span> Medir la adopción</div>
+      <h2>Panel de Adopción</h2>
+      <p>Nuevo módulo <b>Adopción</b> en el menú (grupo Operación), visible solo para roles con
+        acceso total: Administrador y Squad GEO. Responde a dos preguntas de un vistazo.</p>
+      <ul class="feat">
+        <li><b>¿Quién se ha formado?</b> Certificación de la Academia por rol y por ruta: lecciones
+          completadas y badge <i>GEO-OS Certified</i> con nota y fecha.</li>
+        <li><b>¿Qué se usa y qué no?</b> Uso de cada módulo, con los <b>infrautilizados destacados
+          arriba</b> para saber dónde reforzar adopción o formación.</li>
+        <li>El progreso de la Academia ahora se guarda <b>en el servidor</b>, no solo en el
+          navegador: se ve desde cualquier equipo y lo previo se migra solo la primera vez.</li>
+      </ul>
+    </section>
+
+    <section class="block human">
+      <div class="kicker"><span class="tag or">💬</span> Vuestra voz sobre el producto</div>
+      <h2>Comentarios de mejora, tipo post-it</h2>
+      <p>En cualquier página aparece un botón flotante 💬 abajo a la derecha. Sirve para clavar
+        sugerencias en el punto exacto de la herramienta al que se refieren.</p>
+      <ol class="steps">
+        <li>Pulsa 💬 y haz clic donde quieras clavar la nota.</li>
+        <li>Escribe la sugerencia y guarda.</li>
+        <li>La nota queda clavada en esa pantalla; puedes arrastrarla para recolocarla.</li>
+        <li>Cualquiera puede resolver o reabrir; el autor o un admin edita y borra las suyas.</li>
+      </ol>
+      <p style="margin-top:16px">Cualquier usuario con sesión puede dejar y ver comentarios. Es el
+        canal directo para que el feedback de Relevant llegue sin correos ni documentos aparte.</p>
+    </section>
+  </main>
+
+  <div class="access">
+    <div>
+      <div class="lbl">Entra a la plataforma</div>
+      <a href="https://geo-os-production.up.railway.app">geo-os-production.up.railway.app</a>
+    </div>
+    <div class="note">Recarga la página entera (Cmd/Ctrl+R) tras el despliegue para cargar la
+      versión nueva.</div>
+  </div>
+
+  <div class="note-box">
+    <b>Un apunte de diseño:</b> los accesos de la plataforma son por rol (administrador, squad,
+    marcas, hostelería), no por persona. Por eso la analítica de adopción y la autoría de los
+    comentarios se agregan a nivel de rol.
+  </div>
+
+  <footer>
+    <div class="tagline"><b>creatividad humana y precisión tecnológica</b></div>
+    <div class="meta">GEO-OS v1.6.0 · Cupperlab × Relevant · Mahou San Miguel<br>23 julio 2026</div>
+  </footer>
+
+</div>
+</body>
+</html>
